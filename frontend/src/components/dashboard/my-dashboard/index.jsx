@@ -1,9 +1,9 @@
 import Header from "../../common/header/dashboard/Header";
 import SidebarMenu from "../../common/header/dashboard/SidebarMenu_01";
 import MobileMenu from "../../common/header/MobileMenu";
-import AllStatistics from "./AllStatistics";
-import Exemple from "./Exemple";
-import CreateList from "./CreateList";
+import ClaimStatusCards from "./ClaimStatusCard";
+import DashboardView from "./DashboardView";
+import SearchFields from "./SearchFields";
 import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import axios, { all } from "axios";
@@ -12,9 +12,7 @@ import { useRouter } from "next/router";
 
 const Index = () => {
   const [start, setStart] = useState(0);
-  const [currentPage,setCurrentPage] = useState(1)
 
-  const [properties, setProperties] = useState([]);
   const [allClaims, setAllClaims] = useState([]);
   const [filterCardClaim, setFilterCardClaim] = useState([]);
   const [selectedCard, setSelectedCard] = useState(1);
@@ -22,7 +20,7 @@ const Index = () => {
   const [type, setType] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const router = useRouter();
-  const [IsLoading,setIsLoading]= useState(true)
+  const [IsLoading, setIsLoading] = useState(true);
   const [filterClaims, setFilterClaims] = useState([]);
   const [majorSearch, setMajorSearch] = useState("");
 
@@ -30,28 +28,52 @@ const Index = () => {
   const [isRegionChange, setIsRegionChange] = useState(false);
   const [regionSearchValue, setRegionSearchValue] = useState();
 
+  const [filterAccordingClaim, setFilterAccordingClaim] = useState([]);
+  const [showRegionClaim, setShowRegionClaim] = useState(false);
+
   const [lastActivityTimestamp, setLastActivityTimestamp] = useState(
     Date.now()
   );
 
   useEffect(() => {
-    
     const activityHandler = () => {
       setLastActivityTimestamp(Date.now());
     };
 
-    // Attach event listeners for user activity
     window.addEventListener("mousemove", activityHandler);
     window.addEventListener("keydown", activityHandler);
     window.addEventListener("click", activityHandler);
 
-    // Cleanup event listeners when the component is unmounted
     return () => {
       window.removeEventListener("mousemove", activityHandler);
       window.removeEventListener("keydown", activityHandler);
       window.removeEventListener("click", activityHandler);
     };
   }, []);
+
+  useEffect(() => {
+    fetchData();
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 5 * 60 * 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    let temp = [];
+    if (selectedCard === 12) {
+      temp = allClaims;
+    } else {
+      temp = allClaims.filter((claim, index) => {
+        if (String(claim.CurrentStatus) === String(selectedCard)) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
+    setFilterCardClaim(temp);
+  }, [selectedCard, allClaims]);
 
   useEffect(() => {
     let userData = {};
@@ -88,28 +110,24 @@ const Index = () => {
     setFilterClaims(filterClaim);
   }, [searchInput]);
 
-  const [filterAccordingClaim, setFilterAccordingClaim] = useState([]);
-  const [showRegionClaim, setShowRegionClaim] = useState(false);
   useEffect(() => {
     const region = JSON.parse(localStorage.getItem("regionType"));
     if (region) {
       setShowRegionClaim(true);
       const filterAccordingToRegion = allClaims.filter((claim) => {
-        console.log("all Claims", claim.Region, region);
         if (claim.Region == region) {
           return true;
         } else {
           return false;
         }
       });
-      console.log(filterAccordingToRegion);
       setFilterClaims(filterAccordingToRegion);
       setFilterAccordingClaim(filterAccordingToRegion);
     } else {
       setShowRegionClaim(false);
     }
   }, [regionSearchValue]);
-  console.log("isRegionChange", isRegionChange);
+
   useEffect(() => {
     let filterClaim;
     filterClaim = allClaims.filter(
@@ -134,12 +152,10 @@ const Index = () => {
   const fetchData = () => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-    console.log(userInfo);
     if (userInfo === "") {
       router.push("/login");
     } else {
       const { Region1, Region2, Region3, CalimStatus } = userInfo[0];
-      console.log(userInfo[0])
       toast.loading("Loading the claims!!", {
         className: "toast-loading-message",
       });
@@ -183,37 +199,12 @@ const Index = () => {
           setStatus(temp);
         })
         .catch((err) => {
-          console.log(err);
         });
 
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData(); 
-    const intervalId = setInterval(() => {
-      fetchData();
-    },  5 * 60 * 1000);
-    return () => clearInterval(intervalId);
-  }, []);
-
-
-  useEffect(() => {
-    let temp = [];
-    if (selectedCard === 12) {
-      temp = allClaims;
-    } else {
-      temp = allClaims.filter((claim, index) => {
-        if (String(claim.CurrentStatus) === String(selectedCard)) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-    }
-    setFilterCardClaim(temp);
-  }, [selectedCard,allClaims]);
   return (
     <>
       {/* <!-- Main Header Nav --> */}
@@ -260,21 +251,13 @@ const Index = () => {
                   </div>
                 </div>
                 {/* End Dashboard Navigation */}
-
-                {/* <div className="col-lg-12 mb10">
-                  <div className="breadcrumb_content style2">
-                    <h2 className="breadcrumb_title">Howdy, Hasan</h2>
-                    <p>We are glad to see you again!</p>
-                  </div>
-                </div> */}
               </div>
-              {/* End .row */}
 
               <div
                 className="row mt-2"
                 style={{ justifyContent: "space-between" }}
               >
-                <AllStatistics
+                <ClaimStatusCards
                   allClaims={
                     searchInput || majorSearch || isRegionChange
                       ? filterClaims
@@ -296,7 +279,11 @@ const Index = () => {
                 }}
               ></div>
               <div className="row">
-                <CreateList IsLoading={IsLoading} setSearchInput={setSearchInput} setType={setType} />
+                <SearchFields
+                  IsLoading={IsLoading}
+                  setSearchInput={setSearchInput}
+                  setType={setType}
+                />
               </div>
               <div
                 className="bg-dark"
@@ -309,14 +296,7 @@ const Index = () => {
                 }}
               ></div>
               <div className="row">
-                {/* <div className="col-xl-7">
-                  <div className="application_statics">
-                    <h4 className="mb-4">View Statistics</h4>
-                    <StatisticsChart />
-                  </div>
-                </div> */}
-                {/* End statistics chart */}
-                <Exemple
+                <DashboardView
                   claims={
                     searchInput || majorSearch || isRegionChange
                       ? filterClaims
@@ -330,7 +310,6 @@ const Index = () => {
                   setMajorSearch={setMajorSearch}
                   status={status}
                 />
-                
               </div>
               {/* End .row  */}
 
@@ -338,7 +317,6 @@ const Index = () => {
                 <div className="col-lg-12 mt20">
                   <div className="mbp_pagination">
                     <Pagination
-                      
                       setStart={setStart}
                       setEnd={setEnd}
                       start={start}
@@ -368,9 +346,7 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-              {/* End .row */}
             </div>
-            {/* End .col */}
           </div>
         </div>
       </section>

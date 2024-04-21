@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../../common/header/dashboard/Header";
 import SidebarMenu from "../../common/header/dashboard/SidebarMenu_01";
 import MobileMenu from "../../common/header/MobileMenu";
-import CreateList from "./CreateList";
+import AddClaim from "./addClaim";
 import { useRouter } from "next/router";
 
 const Index = () => {
@@ -17,12 +17,10 @@ const Index = () => {
       setLastActivityTimestamp(Date.now());
     };
 
-    // Attach event listeners for user activity
     window.addEventListener("mousemove", activityHandler);
     window.addEventListener("keydown", activityHandler);
     window.addEventListener("click", activityHandler);
 
-    // Cleanup event listeners when the component is unmounted
     return () => {
       window.removeEventListener("mousemove", activityHandler);
       window.removeEventListener("keydown", activityHandler);
@@ -113,43 +111,13 @@ const Index = () => {
                             marginBottom: "5px",
                           }}
                         ></div>
-                        <CreateList />
+                        <AddClaim />
                       </div>
                     </div>
-                    {/* <div className="my_dashboard_review mt30">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <h3 className="mb30">Location</h3>
-                      </div>
-
-                      <LocationField />
-                    </div>
-                  </div> */}
-                    {/* <div className="my_dashboard_review mt30">
-                      <div className="col-lg-12">
-                        <h3 className="mb30">Detailed Information</h3>
-                      </div>
-                      <DetailedInfo />
-                    </div> */}
-                    {/* <div className="my_dashboard_review mt30">
-                    <div className="col-lg-12">
-                      <h3 className="mb30">Property media</h3>
-                    </div>
-                    <PropertyMediaUploader />
-                  </div>
-                  <div className="my_dashboard_review mt30">
-                    <div className="col-lg-12">
-                      <h3 className="mb30">Floor Plans</h3>
-                      <button className="btn admore_btn mb30">Add More</button>
-                    </div>
-                    <FloorPlans />
-                  </div> */}
                   </div>
                   <div className="col-lg-3"></div>
                 </div>
-                {/* End .col */}
               </div>
-              {/* End .row */}
 
               <div className="row mt200">
                 <div className="col-lg-12">
@@ -162,9 +130,7 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-              {/* End .row */}
             </div>
-            {/* End .col */}
           </div>
         </div>
       </section>

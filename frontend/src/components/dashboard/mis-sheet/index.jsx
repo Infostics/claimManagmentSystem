@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../../common/header/dashboard/Header";
 import SidebarMenu from "../../common/header/dashboard/SidebarMenu_01";
 import MobileMenu from "../../common/header/MobileMenu";
-import Exemple from "./Exemple";
+import SheetView from "./SheetView";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,16 +10,6 @@ import ExcelTable from "./ExcelTable";
 import { useRouter } from "next/router";
 
 const Index = () => {
-
-  const convertToYYYYMMDD = (inputDate) => {
-    const date = new Date(inputDate);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
-
   const [allRows, setAllRows] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [allInsurer, setAllInsurer] = useState([]);
@@ -33,7 +23,6 @@ const Index = () => {
   const router = useRouter();
 
   useEffect(() => {
-   
     const activityHandler = () => {
       setLastActivityTimestamp(Date.now());
     };
@@ -68,15 +57,12 @@ const Index = () => {
     return () => clearInterval(inactivityCheckInterval);
   }, [lastActivityTimestamp]);
 
-
-  console.log("datetypeindex",DateType);
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const Start = startDate ? convertToYYYYMMDD(startDate) : null;
     const End = endDate ? convertToYYYYMMDD(endDate) : null;
 
     toast.loading("Fetching the information!!", {
-      // position: toast.POSITION.BOTTOM_LEFT,
       className: "toast-loading-message",
     });
     axios
@@ -95,12 +81,9 @@ const Index = () => {
         console.log(res.data.userData.misSheetDetails);
         setAllRows(res.data.userData.misSheetDetails);
         toast.dismiss();
-        // toast.success("Successfully added");
         toast.success("Fetched  Successfully !", {
-          // position: toast.POSITION.BOTTOM_LEFT,
           className: "toast-loading-message",
         });
-        // toast.success("Successfully Fetched !!")
       })
       .catch((err) => {
         toast.dismiss();
@@ -127,11 +110,21 @@ const Index = () => {
         toast.error("Got error while fetching Insurer Info!");
       });
   }, []);
+
+  const convertToYYYYMMDD = (inputDate) => {
+    const date = new Date(inputDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <>
       {/* <!-- Main Header Nav --> */}
       <Header />
-      <Toaster/>
+      <Toaster />
 
       {/* <!--  Mobile Menu --> */}
       <MobileMenu />
@@ -187,7 +180,7 @@ const Index = () => {
                     <div className="property_table">
                       <div className="table-responsive mt0">
                         {/* <TableData /> */}
-                        <Exemple
+                        <SheetView
                           allRows={allRows}
                           setStartDate={setStartDate}
                           setEndDate={setEndDate}

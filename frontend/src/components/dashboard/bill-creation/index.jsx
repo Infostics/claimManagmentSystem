@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../../common/header/dashboard/Header";
 import SidebarMenu from "../../common/header/dashboard/SidebarMenu";
 import MobileMenu from "../../common/header/MobileMenu";
-import CreateList from "./CreateList";
+import BillCreation from "./BillCreation";
 import axios from "axios";
 import { useRouter } from "next/router";
 import toast, { Toaster } from "react-hot-toast";
@@ -35,7 +35,6 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    
     let userData = {};
     userData = JSON.parse(localStorage.getItem("userInfo"));
     if (!userData) {
@@ -59,7 +58,6 @@ const Index = () => {
     setLeadID(leadId);
 
     toast.loading("Fetching bill creation!!", {
-      // position: toast.POSITION.BOTTOM_LEFT,
       className: "toast-loading-message",
     });
     axios
@@ -72,7 +70,7 @@ const Index = () => {
         },
       })
       .then((res) => {
-        toast.dismiss()
+        toast.dismiss();
         toast.success("Successfully fetched !", {
           className: "toast-loading-message",
         });
@@ -89,7 +87,7 @@ const Index = () => {
     <>
       {/* <!-- Main Header Nav --> */}
       <Header />
-      <Toaster/>
+      <Toaster />
 
       {/* <!--  Mobile Menu --> */}
       <MobileMenu />
@@ -101,7 +99,7 @@ const Index = () => {
           id="DashboardOffcanvasMenu"
           data-bs-scroll="true"
         >
-          <SidebarMenu leadId={leadID}/>
+          <SidebarMenu leadId={leadID} />
         </div>
       </div>
       {/* End sidebar_menu */}
@@ -130,10 +128,7 @@ const Index = () => {
                 {/* End Dashboard Navigation */}
 
                 <div className="col-lg-12 mb-2">
-                  <div className="style2">
-                    {/* <h4 className="breadcrumb_title">Case Details</h4> */}
-                    {/* <p>We are glad to see you again!</p> */}
-                  </div>
+                  <div className="style2"></div>
                 </div>
                 {/* End .col */}
                 <div className="row">
@@ -153,37 +148,9 @@ const Index = () => {
                             marginBottom: "5px",
                           }}
                         ></div>
-                        <CreateList allInfo={allInfo} leadID={leadID} />
+                        <BillCreation allInfo={allInfo} leadID={leadID} />
                       </div>
                     </div>
-                    {/* <div className="my_dashboard_review mt30">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <h3 className="mb30">Location</h3>
-                      </div>
-
-                      <LocationField />
-                    </div>
-                  </div> */}
-                    {/* <div className="my_dashboard_review mt30">
-                      <div className="col-lg-12">
-                        <h3 className="mb30">Detailed Information</h3>
-                      </div>
-                      <DetailedInfo />
-                    </div> */}
-                    {/* <div className="my_dashboard_review mt30">
-                    <div className="col-lg-12">
-                      <h3 className="mb30">Property media</h3>
-                    </div>
-                    <PropertyMediaUploader />
-                  </div>
-                  <div className="my_dashboard_review mt30">
-                    <div className="col-lg-12">
-                      <h3 className="mb30">Floor Plans</h3>
-                      <button className="btn admore_btn mb30">Add More</button>
-                    </div>
-                    <FloorPlans />
-                  </div> */}
                   </div>
                   <div className="col-lg-3"></div>
                 </div>
