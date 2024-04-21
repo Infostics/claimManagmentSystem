@@ -17,7 +17,7 @@ const nextConfig = {
   env: {
     //  BACKEND_DOMAIN: "https://cmsprod.onrender.com",
     // BACKEND_DOMAIN: "http://localhost:3007",
-    BACKEND_DOMAIN: "http://13.126.213.200:3006",
+    BACKEND_DOMAIN: "https://claimmanagmentsystem.onrender.com",
     CRYPTO_SECRET_KEY: "gjfdkhslbreif847593rewfdkjbcm34woebkdjcnx43oihefdkcnx",
     COOKIE_PASSWORD: "ierfkgj439802vfckdh5438909endck",
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: "dcrq3m6dx",
